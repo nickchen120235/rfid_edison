@@ -1,16 +1,28 @@
 import serial
 import requests
+import flask
+from flask_cors import CORS
+import atexit
 
-ser = serial.Serial('/dev/ttyACM0')
+app = flask.Flask(__name__)
+app.config['DEBUG'] = True
+CORS(app)
 
-try:
+@app.route('/api/flask', methods=['GET'])
+def test():
+  return 'Hello Flask'
+
+@app.route('/api/getCard', methods=['GET'])
+def getCard():
+  ser = serial.Serial('COM7')
   while 1:
     while ser.inWaiting():
-      data = ser.readline().decode().replace('\r\n', '')
-      print(data)
-      if data == 'Ready': continue
-      r = requests.post('http://192.168.137.1:4000/api/sendCard', json={'cardID': data})
-      print(r.status_code)
+      cardID = ser.readline().decode().replace('\r\n', '')
+      print(cardID)
+      if cardID != '' and cardID != 'Ready':
+        transfer = {'cardID': cardID}
+        ser.close()
+        return transfer
 
-except KeyboardInterrupt:
-  exit()
+if __name__ == '__main__': 
+  app.run()
