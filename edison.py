@@ -14,7 +14,7 @@ def test():
 
 @app.route('/api/getCard', methods=['GET'])
 def getCard():
-  ser = serial.Serial('COM7')
+  ser = serial.Serial('/dev/ttyACM0')
   while 1:
     while ser.inWaiting():
       cardID = ser.readline().decode().replace('\r\n', '')
