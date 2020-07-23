@@ -8,6 +8,7 @@ try:
     while ser.inWaiting():
       data = ser.readline().decode().replace('\r\n', '')
       print(data)
+      if data == 'Ready': continue
       r = requests.post('http://localhost:4000/api/sendCard', json={'cardID': data})
       print(r.status_code)
 
